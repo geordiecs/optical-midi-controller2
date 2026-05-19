@@ -26,6 +26,10 @@ int redColor = 0;
 int greenColor = 0;
 int blueColor = 0;//store the red, green and blue colors
 
+const uint32_t SIXTEENTHS = 1000;
+uint32_t timeNow;
+uint32_t prevTime = 0;
+
 void setup()
 {
    // Setting the outputs for the color sensor
@@ -42,73 +46,18 @@ void setup()
 
    pinMode(LED_BUILTIN, OUTPUT);
    MIDI.begin(1);                      // Launch MIDI and listen to channel 4
+   Serial.begin(9600);
 }
 
-void loop()
-{
-    // Setting RED (R) filtered photodiodes to be read
-  {
-   digitalWrite(S2,LOW);
+void loop() {
+   digitalWrite(S2,LOW);     // Setting RED (R) filtered photodiodes to be read
    digitalWrite(S3,LOW);
-  
-  // Reading the output frequency
-   redFrequency = pulseIn(sensorOut, LOW);
-  // Remaping the value of the RED (R) frequency from 0 to 255
-  // You must replace with your own values. Here's an example: 
-  // redColor = map(redFrequency, 70, 120, 255,0);
-   redColor = map(redFrequency,1150,100,0,127);
-  
-  // Printing the RED (R) value
-   Serial.print(" R = ");
-   Serial.print(redColor);
-  
-  // Setting GREEN (G) filtered photodiodes to be read
-   digitalWrite(S2,HIGH);
-   digitalWrite(S3,HIGH);
-  
-  // Reading the output frequency
-   greenFrequency = pulseIn(sensorOut, LOW);
-  // Remaping the value of the GREEN (G) frequency from 0 to 255
-  // You must replace with your own values. Here's an example: 
-  // greenColor = map(greenFrequency, 100, 199, 255, 0);
-   greenColor = map(greenFrequency, 8000, 127, 0, 127);
-  
-  // Printing the GREEN (G) value  
-   Serial.print(" G = ");
-   Serial.print(greenColor);
- 
-  // Setting BLUE (B) filtered photodiodes to be read
-   digitalWrite(S2,LOW);
-   digitalWrite(S3,HIGH);
-  
-  // Reading the output frequency
-   blueFrequency = pulseIn(sensorOut, LOW);
-  // Remaping the value of the BLUE (B) frequency from 0 to 255
-  // You must replace with your own values. Here's an example: 
-  // blueColor = map(blueFrequency, 38, 84, 255, 0);
-   blueColor = map(blueFrequency, 1000, 74, 0, 127);
-  
-  // Printing the BLUE (B) value 
-   Serial.print(" B = ");
-   Serial.print(blueColor);
-  }
-  // Checks the current detected color and prints
-  // a message in the serial monitor
-   if(redColor > greenColor && redColor > blueColor){
-      Serial.println(" - RED detected!");
-   }
-   if(greenColor > redColor && greenColor > blueColor){
-    Serial.println(" - GREEN detected!");
-   }
-   if(blueColor > redColor && blueColor > greenColor){
-    Serial.println(" - BLUE detected!");
-   }
-   {
-      digitalWrite(LED_BUILTIN, HIGH);
-      MIDI.sendNoteOn(redColor, 127, 1);    // Send a Note (pitch 42, velo 127 on channel 1)
-      delay(1000);		            // Wait for a second
-      MIDI.sendNoteOff(42, 0, 1);     // Stop the note
-      digitalWrite(LED_BUILTIN, LOW);
-      delay(500);
-   }
+   redFrequency = pulseIn(sensorOut, LOW, 185000);  // Reading the output frequency
+   Serial.print("R = ");
+   Serial.print(redFrequency);
+   redColor = map(redFrequency,143,90,46,66); 
+   MIDI.sendNoteOn(redColor, 127, 1);
+   MIDI.sendNoteOff(redColor, 127, 1);
 }
+
+// the loop starts, 
