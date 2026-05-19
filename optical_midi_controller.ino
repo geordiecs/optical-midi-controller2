@@ -55,9 +55,8 @@ void loop() {
    redFrequency = pulseIn(sensorOut, LOW, 185000);  // Reading the output frequency
    Serial.print("R = ");
    Serial.print(redFrequency);
-   redColor = map(redFrequency,143,90,46,66); 
+   redColor = map(redFrequency,32,8,46,66);
+   Serial.print(redColor);
    MIDI.sendNoteOn(redColor, 127, 1);
    MIDI.sendNoteOff(redColor, 127, 1);
 }
-
-// the loop starts, 
